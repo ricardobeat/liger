@@ -138,6 +138,7 @@ module LSP
   struct DocumentFormattingParams
     include JSON::Serializable
 
+    @[JSON::Field(key: "textDocument")]
     property text_document : TextDocumentIdentifier
     property? options : FormattingOptions?
 
