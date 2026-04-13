@@ -4,7 +4,7 @@
 VERSION := $(shell grep 'VERSION' src/liger.cr | sed 's/.*"\(.*\)".*/\1/')
 BUILD_DIR := build
 
-.PHONY: all clean help arm64-apple-darwin x86_64-apple-darwin x86_64-unknown-linux-musl
+.PHONY: all clean help arm64-apple-darwin x86_64-pc-windows-msvc x86_64-unknown-linux-musl
 
 all: local
 
@@ -22,12 +22,12 @@ arm64-apple-darwin: $(BUILD_DIR)
 	gzip -c bin/liger > $(BUILD_DIR)/liger_arm64-apple-darwin.gz
 	@echo "Built: $(BUILD_DIR)/liger_arm64-apple-darwin.gz"
 
-# macOS x86_64 (Intel)
-x86_64-apple-darwin: $(BUILD_DIR)
-	@echo "Building for macOS x86_64..."
+# Windows x86_64
+x86_64-pc-windows-msvc: $(BUILD_DIR)
+	@echo "Building for Windows x86_64..."
 	shards build liger --release --no-debug --stats --progress
-	gzip -c bin/liger > $(BUILD_DIR)/liger_x86_64-apple-darwin.gz
-	@echo "Built: $(BUILD_DIR)/liger_x86_64-apple-darwin.gz"
+	gzip -c bin/liger.exe > $(BUILD_DIR)/liger_x86_64-pc-windows-msvc.gz
+	@echo "Built: $(BUILD_DIR)/liger_x86_64-pc-windows-msvc.gz"
 
 # Linux x86_64 musl (requires Docker)
 x86_64-unknown-linux-musl: $(BUILD_DIR)
@@ -52,7 +52,7 @@ help:
 	@echo "Available targets:"
 	@echo "  make local                    - Build for current platform"
 	@echo "  make arm64-apple-darwin        - Build for macOS ARM64 (Apple Silicon)"
-	@echo "  make x86_64-apple-darwin       - Build for macOS x86_64 (Intel)"
+	@echo "  make x86_64-pc-windows-msvc    - Build for Windows x86_64"
 	@echo "  make x86_64-unknown-linux-musl - Build for Linux x86_64 (requires Docker)"
 	@echo "  make clean                     - Remove build artifacts"
 	@echo "  make help                      - Show this help"
