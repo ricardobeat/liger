@@ -3,7 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
+  pull_request:
+    branches:
+      - release-builds-test
   workflow_dispatch:
 
 permissions:
