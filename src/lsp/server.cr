@@ -4,6 +4,7 @@ require "./json_rpc"
 require "./text_document"
 require "../crystal/parser"
 require "../crystal/semantic_analyzer"
+require "../liger/formatter"
 
 module LSP
   # LSP server implementation
@@ -54,6 +55,7 @@ module LSP
       @rpc.on_request("workspace/symbol") { |params| handle_workspace_symbol(params) }
       @rpc.on_request("textDocument/rename") { |params| handle_rename(params) }
       @rpc.on_request("textDocument/prepareRename") { |params| handle_prepare_rename(params) }
+      @rpc.on_request("textDocument/formatting") { |params| handle_formatting(params) }
     end
 
     # Handle an initialize request
@@ -90,6 +92,7 @@ module LSP
         "renameProvider"          => {
           "prepareProvider" => true,
         },
+        "documentFormattingProvider" => true,
       }
 
       result = {
@@ -366,6 +369,18 @@ module LSP
       end
 
       JSON.parse("null")
+    end
+
+    # Formatting request
+    private def handle_formatting(params : JSON::Any?) : JSON::Any
+      return JSON.parse("null") unless params
+
+      doc_params = DocumentFormattingParams.from_json(params.to_json)
+      doc = @document_manager.get(doc_params.text_document.uri)
+      return JSON.parse("null") unless doc
+
+      edits = Liger::Formatter.format_document(doc.text)
+      JSON.parse(edits.to_json)
     end
 
     # Send diagnostics for a document
